@@ -1,0 +1,14 @@
+---
+title: "p8105_hw2_sc4935"
+author: "Shiwei Chen"
+date: "10/2/2021"
+output: github_document
+---
+
+```{r, message=FALSE}
+library(tidyverse)
+```
+
+
+# Problem 1
+
