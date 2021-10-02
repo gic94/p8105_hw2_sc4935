@@ -12,3 +12,18 @@ library(tidyverse)
 
 # Problem 1
 
+We first import `Trash-Wheel-Collection-Totals-8-6-19.xlsx`.
+
+We omit non-data entries
+
+```{r}
+library(readxl)
+TrashWheel_df = read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", 
+                           skip = 1, range = "A2:N408")
+
+TrashWheel_df = janitor::clean_names(TrashWheel_df)
+names(TrashWheel_df)
+view(TrashWheel_df)
+TrashWheel_df
+```
+
