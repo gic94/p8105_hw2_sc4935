@@ -35,48 +35,65 @@ Then, to omit rows that do not include dumpster-specific data, and round the num
 TrashWheel_cleaned_df = 
   filter(TrashWheel_df, !is.na(dumpster)) %>%
   mutate(sports_balls = round(sports_balls, digits = 0))
+
+view(TrashWheel_cleaned_df)
+TrashWheel_cleaned_df
 ```
 
-Read and clean precipitation data for 2018 and 2019, convert month to a character variable.
+Read and clean precipitation data for 2018 and 2019.
 
 ```{r}
 P18_df = 
   read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2018 Precipitation", skip = 1, range = "A2:B14") %>% 
   janitor::clean_names() %>% 
+  filter(!is.na(total)) %>% 
   mutate(year = 2018)
 
 P18_df
 ```
 
 ```{r}
-P18_df$month = month.name
-  
-P18_df  
-```
-
-```{r}
 P19_df = 
   read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2019 Precipitation", skip = 1, range = "A2:B14") %>% 
   janitor::clean_names() %>% 
+  filter(!is.na(total)) %>% 
   mutate(year = 2019)
+
 P19_df
 ```
 
-```{r}
-P19_df$month = month.name
-  
-P19_df  
-```
-
-Combine precipitation datasets.
+Combine precipitation datasets, convert month to a character variable.
 
 ```{r}
-P1819_df = full_join(P18_df, P19_df)
+P1819_df = full_join(P18_df, P19_df) %>% 
+  mutate(month = month.name[month]) %>% 
+  relocate(year)
 
 view(P1819_df)
-  
 P1819_df  
 ```
 
-Write a paragraph about these data(2018 and 2019).
+Write a paragraph about these data.
+
+```{r}
+Sportsballs_19 = filter(TrashWheel_cleaned_df, year == 2019) %>% 
+  select(sports_balls)
+
+median(pull(Sportsballs_19, sports_balls))
+sum(pull(P18_df, total))
+
+skimr::skim(TrashWheel_df)
+skimr::skim(TrashWheel_cleaned_df)
+skimr::skim(P1819_df)
+```
+
+In conclusion, the total precipitation in 2018 is 70.33, and the median number of sports balls in a dumpster in 2019 is 8.5. We omit some non-data columns and rows to clean the Trash Wheel data set. For example, we round the variable of "number of sports balls" to integer. For the 2018 and 2019 Precipitation combined data set, I suppose that the key variable is "total". Since the data of 2019 Precipitation has 6 non-data entries under the variable "total", the combined data set only shows 6 months values (Jan to Jun) after we drop the non-data entries.
+
+
+
+
+
+
+
+# Problem 2
 
