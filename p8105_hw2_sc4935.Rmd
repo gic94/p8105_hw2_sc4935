@@ -93,7 +93,12 @@ In conclusion, the total precipitation in 2018 is 70.33, and the median number o
 
 
 
-
-
 # Problem 2
 
+We first import the FiveThirtyEight data.
+
+First, clean the data in pols-month.csv. 
+
+```{r}
+
+```
