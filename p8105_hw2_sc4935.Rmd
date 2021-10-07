@@ -5,8 +5,10 @@ date: "10/2/2021"
 output: github_document
 ---
 
-```{r, message=FALSE}
+```{r, echo=FALSE, message=FALSE}
 library(tidyverse)
+library(readxl)
+library(dplyr)
 ```
 
 
@@ -14,16 +16,67 @@ library(tidyverse)
 
 We first import `Trash-Wheel-Collection-Totals-8-6-19.xlsx`.
 
-We omit non-data entries
+Omit non-data entries.
 
 ```{r}
-library(readxl)
-TrashWheel_df = read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", 
-                           skip = 1, range = "A2:N408")
+TrashWheel_df = read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "Mr. Trash Wheel", skip = 1, range = "A2:N408") %>% 
+  janitor::clean_names() %>% 
+  drop_na()
 
-TrashWheel_df = janitor::clean_names(TrashWheel_df)
 names(TrashWheel_df)
 view(TrashWheel_df)
+
 TrashWheel_df
 ```
+
+Then, to omit rows that do not include dumpster-specific data, and round the number of sports balls to the nearest integer.
+
+```{r}
+TrashWheel_cleaned_df = 
+  filter(TrashWheel_df, !is.na(dumpster)) %>%
+  mutate(sports_balls = round(sports_balls, digits = 0))
+```
+
+Read and clean precipitation data for 2018 and 2019, convert month to a character variable.
+
+```{r}
+P18_df = 
+  read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2018 Precipitation", skip = 1, range = "A2:B14") %>% 
+  janitor::clean_names() %>% 
+  mutate(year = 2018)
+
+P18_df
+```
+
+```{r}
+P18_df$month = month.name
+  
+P18_df  
+```
+
+```{r}
+P19_df = 
+  read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2019 Precipitation", skip = 1, range = "A2:B14") %>% 
+  janitor::clean_names() %>% 
+  mutate(year = 2019)
+P19_df
+```
+
+```{r}
+P19_df$month = month.name
+  
+P19_df  
+```
+
+Combine precipitation datasets.
+
+```{r}
+P1819_df = full_join(P18_df, P19_df)
+
+view(P1819_df)
+  
+P1819_df  
+```
+
+Write a paragraph about these data(2018 and 2019).
 
