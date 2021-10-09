@@ -82,12 +82,15 @@ Sportsballs_19 = filter(TrashWheel_cleaned_df, year == 2019) %>%
 median(pull(Sportsballs_19, sports_balls))
 sum(pull(P18_df, total))
 
+dim(TrashWheel_cleaned_df)
+dim(P1819_df)
+
 skimr::skim(TrashWheel_df)
 skimr::skim(TrashWheel_cleaned_df)
 skimr::skim(P1819_df)
 ```
 
-In conclusion, the total precipitation in 2018 is 70.33, and the median number of sports balls in a dumpster in 2019 is 9. We omit some non-data columns and rows to clean the Trash Wheel data set. For example, we round the variable of "number of sports balls" to integer. For the 2018 and 2019 Precipitation combined data set, I suppose that the key variable is "total", since it illustrates the monthly precipitation value for both 2018 and 2019.
+In conclusion, the total precipitation in 2018 is 70.33, and the median number of sports balls in a dumpster in 2019 is 9. The Trash Wheel data set has 453 rows and 14 columns. We omit some non-data columns and rows to clean the Trash Wheel data set. For example, we round the variable of "number of sports balls" to integer. For the 2018 and 2019 Precipitation combined data set, we have 24 rows and 3 columns. I suppose that the key variable is "total", since it illustrates the monthly precipitation value for both 2018 and 2019.
 
 
 
