@@ -19,7 +19,7 @@ We first import `Trash-Wheel-Collection-Totals-8-6-19.xlsx`.
 Omit non-data entries.
 
 ```{r}
-TrashWheel_df = read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "Mr. Trash Wheel", skip = 1, range = "A2:N408") %>% 
+TrashWheel_df = read_excel("data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx", sheet = "Mr. Trash Wheel", skip = 1, range = "A2:N535") %>% 
   janitor::clean_names() %>% 
   drop_na()
 
@@ -44,7 +44,7 @@ Read and clean precipitation data for 2018 and 2019.
 
 ```{r}
 P18_df = 
-  read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2018 Precipitation", skip = 1, range = "A2:B14") %>% 
+  read_excel("data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx", sheet = "2018 Precipitation", skip = 1, range = "A2:B14") %>% 
   janitor::clean_names() %>% 
   filter(!is.na(total)) %>% 
   mutate(year = 2018)
@@ -54,7 +54,7 @@ P18_df
 
 ```{r}
 P19_df = 
-  read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2019 Precipitation", skip = 1, range = "A2:B14") %>% 
+  read_excel("data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx", sheet = "2019 Precipitation", skip = 1, range = "A2:B14") %>% 
   janitor::clean_names() %>% 
   filter(!is.na(total)) %>% 
   mutate(year = 2019)
@@ -87,8 +87,7 @@ skimr::skim(TrashWheel_cleaned_df)
 skimr::skim(P1819_df)
 ```
 
-In conclusion, the total precipitation in 2018 is 70.33, and the median number of sports balls in a dumpster in 2019 is 8.5. We omit some non-data columns and rows to clean the Trash Wheel data set. For example, we round the variable of "number of sports balls" to integer. For the 2018 and 2019 Precipitation combined data set, I suppose that the key variable is "total". Since the data of 2019 Precipitation has 6 non-data entries under the variable "total", the combined data set only shows 6 months values (January to June) after we drop the non-data entries.
-
+In conclusion, the total precipitation in 2018 is 70.33, and the median number of sports balls in a dumpster in 2019 is 9. We omit some non-data columns and rows to clean the Trash Wheel data set. For example, we round the variable of "number of sports balls" to integer. For the 2018 and 2019 Precipitation combined data set, I suppose that the key variable is "total", since it illustrates the monthly precipitation value for both 2018 and 2019.
 
 
 
@@ -181,3 +180,63 @@ For the resulting dataset, the dimention is 822 and 11, which implies 822 rows a
 
 
 # Problem 3
+
+We first import the data of the popularity of baby names.
+
+Load and tidy the data, and remove duplicate rows.
+
+```{r}
+popular_baby_names_df = read_csv("./data/Popular_Baby_Names.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(ethnicity = recode(ethnicity, "ASIAN AND PACI" = "ASIAN AND PACIFIC ISLANDER", "WHITE NON HISP" = "WHITE NON HISPANIC", "BLACK NON HISP" = "BLACK NON HISPANIC")) %>% 
+  mutate(gender = str_to_sentence(gender),
+         ethnicity = str_to_sentence(ethnicity),
+         childs_first_name = str_to_sentence(childs_first_name)) %>% 
+  mutate(year_of_birth = as.character(year_of_birth)) %>% 
+  distinct() %>% 
+  view()
+
+popular_baby_names_df
+```
+
+Produce a well-structured, reader-friendly table showing the rank in popularity of the name “Olivia” as a female baby name over time, and produce a similar table showing the most popular name among male children over time.
+
+```{r}
+Olivia_as_female_name = filter(popular_baby_names_df, childs_first_name == "Olivia", gender == "Female") %>% 
+  select( -gender, -childs_first_name, -count) %>% 
+  pivot_wider(
+  names_from = "year_of_birth", 
+  values_from = "rank") %>% 
+  view()
+
+Olivia_as_female_name
+
+
+Most_popular_male_name = filter(popular_baby_names_df, rank == 1, gender == "Male") %>%
+  select(-gender, -count, -rank) %>% 
+  pivot_wider(
+  names_from = "year_of_birth", 
+  values_from = "childs_first_name") %>% 
+  view()
+
+Most_popular_male_name
+```
+
+Finally, for male, white non-hispanic children born in 2016, produce a scatter plot showing the number of children with a name (y axis) against the rank in popularity of that name (x axis).
+
+```{r}
+Male_white_2016 = filter(popular_baby_names_df, gender == "Male", year_of_birth == 2016, ethnicity == "White non hispanic")
+
+Male_white_2016
+
+ggplot(Male_white_2016, aes(x = rank, y = count)) + geom_point() 
+  
+  
+```
+
+Finished homework.
+
+
+
+
+
